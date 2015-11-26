@@ -15,7 +15,7 @@
 		$scope.data;
 
 		$scope.update = function(data){
-			var socket = io('http://localhost:3000');
+			var socket = io('http://oascache-info.herokuapp.com');
 			socket.on('news', function (data) {
 				console.log(data);
 				$scope.brand = data.brand;
