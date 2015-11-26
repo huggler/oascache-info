@@ -1,0 +1,83 @@
+<html ng-app>
+	<head>
+	<script src="https://cdn.socket.io/socket.io-1.3.7.js"></script>
+	<script src="https://code.angularjs.org/angular-1.0.1.js"></script>
+	<!-- Latest compiled and minified CSS -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" integrity="sha512-dTfge/zgoMYpP7QbHy4gWMEGsbsdZeCXz7irItjcC3sPUFtf0kuFbDz/ixG7ArTxmDjLXDmezHubeNikyKGVyQ==" crossorigin="anonymous">
+
+	<!-- Optional theme -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css" integrity="sha384-aUGj/X2zp5rLCbBxumKTCw2Z50WgIr1vs/PFN4praOTvYXWlVyh2UtNUU0KAUhAX" crossorigin="anonymous">
+	<script>
+
+	var myApp = angular.module('myApp',[]);
+	function MyCtrl($scope) {
+		$scope.brand;
+		$scope.data;
+
+		$scope.update = function(data){
+			var socket = io('http://localhost:3000');
+			socket.on('news', function (data) {
+				console.log(data);
+				$scope.brand = data.brand;
+				$scope.data = data;
+				$scope.$apply();
+				// print(data);
+				// socket.emit('my other event', { my: 'data' });
+			});
+		}
+
+		$scope.update();
+	}
+	</script>
+	<style type="text/css">
+	.americanas th { background: #e60014}
+	.submarino th { background: #00adef}
+	.shoptime th { background: #ff9c5a}
+	</style>		
+	</head>
+	<body ng-controller="MyCtrl">
+
+	<div ng-repeat="data in data.brands">
+		<table class="table">
+			<thead>
+				<tr class="{{data.brand}}">
+					<th>{{data.brand}}</th>
+					<th>complete</th>
+					<th>dequeued</th>
+					<th>queued</th>
+					<th>failed</th>
+				</tr>				
+			</thead>
+			<tbody>
+				<tr>
+					<td>oas</td>
+					<td>{{data.oas.complete}}</td>
+					<td>{{data.oas.dequeued}}</td>
+					<td>{{data.oas.queued}}</td>
+					<td>{{data.oas.failed}}</td>
+				</tr>
+				<tr>
+					<td>oas-sitepage</td>
+					<td>{{data.oassitepage.complete}}</td>
+					<td>{{data.oassitepage.dequeued}}</td>
+					<td>{{data.oassitepage.queued}}</td>
+					<td>{{data.oassitepage.failed}}</td>
+				</tr>
+				<tr>
+					<td>ftp-upload</td>
+					<td>{{data.ftpupload.complete}}</td>
+					<td>{{data.ftpupload.dequeued}}</td>
+					<td>{{data.ftpupload.queued}}</td>
+					<td>{{data.ftpupload.failed}}</td>
+				</tr>				
+			</tbody>
+		</table>
+	</div>
+
+
+
+
+
+	</body>
+</html>
+
