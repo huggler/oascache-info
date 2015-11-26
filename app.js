@@ -6,7 +6,7 @@ var request = Q.nfbind(require('request'));
 var brands = ['shoptime', 'americanas', 'submarino'];
 
 
-app.listen(3000);
+app.listen(process.env.PORT || 3000);
 
 
 function handler (req, res) {
