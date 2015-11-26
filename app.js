@@ -6,9 +6,10 @@ var request = Q.nfbind(require('request'));
 var brands = ['shoptime', 'americanas', 'submarino'];
 
 
-app.listen(process.env.PORT || 3000);
+app.listen(process.env.PORT || 5000);
 
 
+console.log(process.env.PORT);
 function handler (req, res) {
   fs.readFile(__dirname + '/index.html',
   function (err, data) {
