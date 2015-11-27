@@ -1,6 +1,5 @@
 <html ng-app>
 	<head>
-	<script src="https://cdn.socket.io/socket.io-1.3.7.js"></script>
 	<script src="https://code.angularjs.org/angular-1.0.1.js"></script>
 	<!-- Latest compiled and minified CSS -->
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" integrity="sha512-dTfge/zgoMYpP7QbHy4gWMEGsbsdZeCXz7irItjcC3sPUFtf0kuFbDz/ixG7ArTxmDjLXDmezHubeNikyKGVyQ==" crossorigin="anonymous">
@@ -10,34 +9,62 @@
 	<script>
 
 	var myApp = angular.module('myApp',[]);
-	function MyCtrl($scope) {
-		$scope.brand;
-		$scope.data;
+	function MyCtrl($scope, $http, $q, $timeout) {
+
+		$scope.response = [];
+		$scope.brands = ['shoptime', 'americanas', 'submarino'];
 
 		$scope.update = function(data){
-			var socket = io('https://oascache-info.herokuapp.com:5000');
-			socket.on('news', function (data) {
-				console.log(data);
-				$scope.brand = data.brand;
-				$scope.data = data;
-				$scope.$apply();
-				// print(data);
-				// socket.emit('my other event', { my: 'data' });
+
+			var promises = [];
+
+			$scope.brands.forEach(function(brand){
+
+				var deferred = $q.defer();
+				var url = 'https://api.'+ brand +'.com.br/v1/oascache/info';
+				promises.push($http.get(url, {params: {brand : brand}}, function (error, msg, body) {
+				  if (error) {
+				    deferred.reject();
+				  }
+				  deferred.resolve();
+				}));
 			});
-		}
+
+			$q.all(promises).then(function (resp) {
+
+				$scope.response = [];
+				var arr = [];
+
+				resp.forEach(function(obj){
+
+				  var brand = obj.config.params.brand;
+				  var body = obj.data;
+
+				  var oas = body.oas[brand];
+				  var oassitepage = body.oassitepage[brand];
+				  var ftpupload = body.ftpupload[brand];
+				  arr.push({ 'oas' : oas, 'oassitepage': oassitepage, 'ftpupload': ftpupload, 'brand' : brand });
+				});
+
+				$scope.response = arr;
+			});
+
+			$timeout($scope.update, 5000);
+		};
 
 		$scope.update();
-	}
+	};
+
 	</script>
 	<style type="text/css">
-	.americanas th { background: #e60014}
+	.americanas th { background: #e60014; color: #fff}
 	.submarino th { background: #00adef}
 	.shoptime th { background: #ff9c5a}
 	</style>		
 	</head>
 	<body ng-controller="MyCtrl">
 
-	<div ng-repeat="data in data.brands">
+	<div ng-repeat="data in response">
 		<table class="table">
 			<thead>
 				<tr class="{{data.brand}}">
