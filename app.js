@@ -1,10 +1,34 @@
 // var app = require('http').createServer(handler)
 // var io = require('socket.io')(app);
-// var fs = require('fs');
+var fs = require('fs');
 // var Q = require('q');
 // var request = Q.nfbind(require('request'));
 // var brands = ['shoptime', 'americanas', 'submarino'];
 
+var http = require('http');
+
+var hostname = '127.0.0.1';
+var post = process.env.PORT || 5000;
+
+http.createServer(function(req, res) {
+
+  fs.readFile(__dirname + '/index.html',
+  function (err, data) {
+    if (err) {
+      res.writeHead(500);
+      return res.end('Error loading index.html');
+    }
+
+    res.writeHead(200);
+    res.end(data);
+  });
+
+
+
+  res.writeHead(200, { 'Content-Type': 'text/plain' });
+}).listen(post, function() {
+  console.log('Server running at http://${hostname}:${post}/');
+});
 
 // app.listen(process.env.PORT || 5000);
 
